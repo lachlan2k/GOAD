@@ -19,7 +19,7 @@ boxes = [
 
   config.vm.provider :libvirt do |libvirt|
     libvirt.cpus = 6
-    libvirt.memory = 8192
+    libvirt.memory = 6000
   end
 
   # disable rdp forwarded port inherited from StefanScherer box
@@ -30,10 +30,10 @@ boxes = [
     config.vbguest.auto_update = false
   end
 
-  config.vm.boot_timeout = 600
+  config.vm.boot_timeout = 1200
   config.vm.graceful_halt_timeout = 600
-  config.winrm.retry_limit = 30
-  config.winrm.retry_delay = 10
+  config.winrm.retry_limit = 60
+  config.winrm.retry_delay = 15
 
   boxes.each do |box|
     config.vm.define box[:name] do |target|
