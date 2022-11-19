@@ -1,33 +1,25 @@
 Vagrant.configure("2") do |config|
 
+   iface_bridge = "br0"
+   
 # BUILD with a full up to date vm if you don't want version with old vulns 
 # ansible versions boxes : https://app.vagrantup.com/jborean93
 boxes = [
    # windows server 2019
-  { :name => "DC01",  :ip => "10.13.5.10", :box => "jborean93/WindowsServer2019", :os => "windows", :iface_bridge => "br0" },
+  { :name => "DC01",  :ip => "10.13.5.10", :box => "jborean93/WindowsServer2019", :os => "windows" },
   # windows server 2019
-  { :name => "DC02",  :ip => "10.13.5.11", :box => "jborean93/WindowsServer2019", :os => "windows", :iface_bridge => "br0" },
+  { :name => "DC02",  :ip => "10.13.5.11", :box => "jborean93/WindowsServer2019", :os => "windows" },
   # windows server 2016
-  { :name => "DC03",  :ip => "10.13.5.12", :box => "jborean93/WindowsServer2016", :os => "windows", :iface_bridge => "br0" },
+  { :name => "DC03",  :ip => "10.13.5.12", :box => "jborean93/WindowsServer2016", :os => "windows" },
   # windows server 2019
-  { :name => "SRV02", :ip => "10.13.5.22", :box => "jborean93/WindowsServer2019", :os => "windows", :iface_bridge => "br0" },
+  { :name => "SRV02", :ip => "10.13.5.22", :box => "jborean93/WindowsServer2019", :os => "windows" },
   # windows server 2016
-  { :name => "SRV03", :ip => "10.13.5.23", :box => "jborean93/WindowsServer2016", :os => "windows", :iface_bridge => "br0" }
+  { :name => "SRV03", :ip => "10.13.5.23", :box => "jborean93/WindowsServer2016", :os => "windows" }
 ]
 
   config.vm.provider :libvirt do |libvirt|
     libvirt.cpus = 6
     libvirt.memory = 8192
-  end
-  
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 3000
-    v.cpus = 2
-  end
-
-  config.vm.provider "vmware_desktop" do |v|
-    v.vmx["memsize"] = "3000"
-    v.vmx["numvcpus"] = "2"
   end
 
   # disable rdp forwarded port inherited from StefanScherer box
@@ -59,7 +51,12 @@ boxes = [
       target.vm.synced_folder '.', '/vagrant', disabled: true
 
       # IP
-      target.vm.network :public_network, bridge: box[:iface_bridge], ip: box[:ip]
+      # target.vm.network :public_network, bridge: box[:iface_bridge], ip: box[:ip]
+      target.vm.network :public_network,
+        :dev => iface_bridge,
+        :mode => "bridge",
+        :type => "bridge",
+        :ip => box[:ip]
 
       # OS specific
       if box[:os] == "windows"
