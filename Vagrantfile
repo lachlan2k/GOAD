@@ -20,6 +20,7 @@ boxes = [
   config.vm.provider :libvirt do |libvirt|
     libvirt.cpus = 6
     libvirt.memory = 6000
+    libvirt.video_type = "cirrus"
   end
 
   # disable rdp forwarded port inherited from StefanScherer box
